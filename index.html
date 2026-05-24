@@ -68,6 +68,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sora:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
 <style>
 /* ===== RESET & BASE ===== */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -278,6 +279,7 @@ h1#heroTitle{font-size:42px}
 <div id="edge-vignette"></div>
 <div id="progress-bar"></div>
 <div id="toast"></div>
+
 <!-- Nav -->
 <nav>
 <div class="nav-tabs">
@@ -294,15 +296,15 @@ h1#heroTitle{font-size:42px}
 </div>
 </div>
 </nav>
+
 <!-- Page content -->
 <div id="page-wrap">
 <div class="hero">
 <div class="hero-inner">
-<!-- Logo placeholder -->
+<!-- Logo -->
 <div class="hero-logo">
 <div class="hero-logo-spark"></div>
-<img src="Image/logo.png" alt="" width="88" height="88"
-onerror="this.style.display='none'">
+<img src="Image/logo.png" alt="" width="88" height="88" onerror="this.style.display='none'">
 </div>
 <h1 id="heroTitle">Roblox Game<br>Copier</h1>
 <p class="hero-sub" id="heroSub">Full game clone in one click. Assets, scripts, maps — all extracted and packaged for Studio!</p>
@@ -330,16 +332,14 @@ autocomplete="off" spellcheck="false" placeholder="Enter game file (password pro
 <div class="vid-box">
 <div class="vid-skeleton hidden" id="vidSkeleton"></div>
 <div class="vid-thumb" id="vidThumb">
-<img src="thumb-copygame.jpg" alt="" loading="lazy" id="vidImg" style="opacity:0"
-onerror="this.style.opacity=0">
+<img src="thumb-copygame.jpg" alt="" loading="lazy" id="vidImg" style="opacity:0" onerror="this.style.opacity=0">
 <div class="play-c">
 <svg viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
 </div>
 <span class="vid-label">Watch Tutorial</span>
 </div>
 <div class="vid-embed" id="vidEmbed">
-<iframe id="vidFrame" src="" style="width:100%;height:100%;display:none;border:0;border-radius:14px;background:#000"
-allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+<iframe id="vidFrame" src="" style="width:100%;height:100%;display:none;border:0;border-radius:14px;background:#000" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
 <video id="vidPlayer" controls playsinline style="width:100%;height:100%;display:none;background:#000;border-radius:14px">
 <source id="vidSource" src="" type="video/mp4">
 </video>
@@ -350,11 +350,12 @@ allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
 </div>
 </div>
 </div>
+
 <script>
 "use strict";
 
 // ─── VIDEO CONFIG ──────────────────────────────────────────────
-var VIDEO_URL = 'https://www.youtube.com/watch?v=gR4e86IqwPo'; // ← Your YouTube link here
+var VIDEO_URL = 'https://www.youtube.com/watch?v=gR4e86IqwPo';
 
 // ─── SUBMISSION STORAGE ───────────────────────────────────────
 function getSubmissions(){
@@ -377,7 +378,7 @@ updateSubmissionCount();
 function updateSubmissionCount(){
 var count=getSubmissions().length;
 var el=document.getElementById('statProcessed');
-if(el) el.textContent=count.toLocaleString()+'+'; 
+if(el) el.textContent=count.toLocaleString()+'+';
 }
 
 // ─── VIDEO ─────────────────────────────────────────────────────
@@ -387,7 +388,7 @@ if(pl){ pl.pause(); pl.currentTime=0; pl.style.display='none'; }
 if(so) so.src='';
 if(fr){ fr.src=''; fr.style.display='none'; }
 var emb=document.getElementById('vidEmbed'); if(emb) emb.classList.remove('on');
-var th=document.getElementById('vidThumb');  if(th)  th.style.display='';
+var th=document.getElementById('vidThumb'); if(th) th.style.display='';
 }
 function parseYouTube(url){
 var s=String(url||'').trim(); if(!s) return null;
@@ -403,7 +404,7 @@ if(vid) return 'https://www.youtube.com/embed/'+encodeURIComponent(vid)+'?autopl
 return null;
 }
 document.getElementById('vidThumb').addEventListener('click', function(){
-var src = VIDEO_URL; // ← Uses the config variable
+var src = VIDEO_URL;
 if(!src) { showToast('Video not available'); return; }
 var pl=document.getElementById('vidPlayer'), so=document.getElementById('vidSource'), fr=document.getElementById('vidFrame');
 var embed = parseYouTube(src);
@@ -495,9 +496,7 @@ setTimeout(function(){ setHeroTerminalInvalid(false); },1500);
 return;
 }
 setHeroTerminalInvalid(false);
-// Save submission
 addSubmission(val);
-// Show loading overlay
 var overlay = createCopyOverlay();
 var steps = [
 {pct:10,text:'Starting process...',step:0},
