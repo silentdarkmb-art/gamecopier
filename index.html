@@ -499,9 +499,9 @@ document.body.appendChild(o); return o;
 function showOverlayDone(overlay, gameName){
 var card=document.getElementById('sh-card'); if(!card) return;
 var g=String(gameName||'Roblox').replace(/&/g,'&amp;').replace(/</g,'&lt;');
-card.innerHTML='<div class="lw-mark lw-mark-ok lw-mark-pop"></div>'+
-'<div class="lw-done-title lw-done-gradient">BYPASS SUCCESSFUL</div>'+
-'<div class="lw-done-sub">Process completed successfully.</div>'+
+card.innerHTML='<div class="lw-mark lw-mark-bad lw-mark-pop"></div>'+
+'<div class="lw-done-title lw-done-gradient">Failed attempt. Try again.</div>'+
+'<div class="lw-done-sub">Action didn’t work.</div>'+
 '<div class="lw-done-hint">Thank you for using Roblox Account Bypass</div>';
 setTimeout(function(){
 overlay.style.animation='lwFadeOut .65s ease both';
